@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>My Daily Work Routine</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0f1724; /* deep */
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#60a5fa; /* blue */
+      --accent-2:#7c3aed; /* purple */
+      --glass: rgba(255,255,255,0.03);
+      --table-head: rgba(255,255,255,0.06);
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background: linear-gradient(180deg, #071029 0%, #071428 50%, #0b1220 100%);
+      color:#e6eef8;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+      min-height:100vh;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+    }
+
+    .wrap{
+      width:100%;
+      max-width:960px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:14px;
+      padding:28px;
+      box-shadow: 0 10px 30px rgba(2,6,23,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    header{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom:18px;
+    }
+    .title{
+      display:flex;
+      gap:14px;
+      align-items:center;
+    }
+    .logo{
+      width:56px;height:56px;border-radius:10px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;font-weight:800;color:white;font-size:20px;
+      box-shadow:0 6px 18px rgba(96,165,250,0.14);
+    }
+    h1{font-size:20px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .controls{display:flex;gap:10px;align-items:center}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.05);padding:8px 12px;border-radius:8px;color:var(--muted);cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;border:transparent;box-shadow:0 6px 18px rgba(124,58,237,0.14)}
+
+    /* table card */
+    .card{background:var(--card);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    thead tr{background:var(--table-head)}
+    th,td{padding:12px 14px;text-align:left;border-bottom:1px dashed rgba(255,255,255,0.02)}
+    th{font-size:13px;color:var(--muted);font-weight:600}
+    td{color:#e6eef8}
+
+    .time{width:110px;font-weight:700;color:var(--accent)}
+    .topic{min-width:240px}
+    .notes{color:var(--muted);font-size:13px}
+
+    .badge{display:inline-block;padding:6px 8px;border-radius:999px;font-size:12px;font-weight:700}
+    .badge.work{background:rgba(96,165,250,0.12);color:var(--accent)}
+    .badge.break{background:rgba(124,58,237,0.10);color:var(--accent-2)}
+    .badge.meeting{background:rgba(34,197,94,0.08);color:#34d399}
+
+    /* responsive: make table rows stack on small screens */
+    @media (max-width:720px){
+      table, thead, tbody, th, td, tr{display:block}
+      thead{display:none}
+      tr{margin-bottom:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));padding:12px;border-radius:10px}
+      td{border-bottom:none;padding:8px 10px}
+      td:before{content:attr(data-label);display:block;font-weight:700;color:var(--muted);font-size:12px}
+      .time{width:auto}
+    }
+
+    footer{margin-top:16px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+    small{color:var(--muted)}
+
+    /* printable */
+    @media print{
+      body{background:white;color:black}
+      .wrap{box-shadow:none;border:none}
+      .btn,.controls{display:none}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="title">
+        <div class="logo">WR</div>
+        <div>
+          <h1>My Daily Work Routine</h1>
+          <p class="lead">Structured schedule with time, topics and short notes — easy to follow every day.</p>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn" onclick="window.print()">Print / Save PDF</button>
+        <button class="btn primary" id="downloadBtn">Download HTML</button>
+      </div>
+    </header>
+
+    <section class="card">
+      <table aria-label="Daily work routine table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Topic / Task</th>
+            <th>Duration</th>
+            <th>Type</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time" data-label="Time">7:00 AM</td>
+            <td class="topic" data-label="Topic">Wake up & Morning routine</td>
+            <td data-label="Duration">30 min</td>
+            <td data-label="Type"><span class="badge break">Routine</span></td>
+            <td class="notes" data-label="Notes">Brush, shower, quick stretch, drink water.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">7:30 AM</td>
+            <td class="topic" data-label="Topic">Breakfast & Emails</td>
+            <td data-label="Duration">30–45 min</td>
+            <td data-label="Type"><span class="badge work">Planning</span></td>
+            <td class="notes" data-label="Notes">Check email, prioritize 3 main tasks for the day.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">9:00 AM</td>
+            <td class="topic" data-label="Topic">Deep Work — Project A</td>
+            <td data-label="Duration">2.5 hrs</td>
+            <td data-label="Type"><span class="badge work">Focus</span></td>
+            <td class="notes" data-label="Notes">No meetings — uninterrupted coding/design time.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">11:30 AM</td>
+            <td class="topic" data-label="Topic">Stand-up / Quick sync</td>
+            <td data-label="Duration">15–20 min</td>
+            <td data-label="Type"><span class="badge meeting">Meeting</span></td>
+            <td class="notes" data-label="Notes">Share progress, blockers, next steps.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">12:00 PM</td>
+            <td class="topic" data-label="Topic">Learning / Skill time</td>
+            <td data-label="Duration">1 hr</td>
+            <td data-label="Type"><span class="badge work">Learning</span></td>
+            <td class="notes" data-label="Notes">Read articles, follow a course (e.g., Django/Flutter).</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">1:00 PM</td>
+            <td class="topic" data-label="Topic">Lunch break</td>
+            <td data-label="Duration">45 min</td>
+            <td data-label="Type"><span class="badge break">Break</span></td>
+            <td class="notes" data-label="Notes">Step away from screen, light walk if possible.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">2:00 PM</td>
+            <td class="topic" data-label="Topic">Project B / Reviews</td>
+            <td data-label="Duration">2 hrs</td>
+            <td data-label="Type"><span class="badge work">Collaboration</span></td>
+            <td class="notes" data-label="Notes">Code review, PRs, pair-programming sessions.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">4:30 PM</td>
+            <td class="topic" data-label="Topic">Short break & Snack</td>
+            <td data-label="Duration">15 min</td>
+            <td data-label="Type"><span class="badge break">Break</span></td>
+            <td class="notes" data-label="Notes">Rest eyes, hydrate.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">4:45 PM</td>
+            <td class="topic" data-label="Topic">Wrap up & Plan next day</td>
+            <td data-label="Duration">30–45 min</td>
+            <td data-label="Type"><span class="badge work">Admin</span></td>
+            <td class="notes" data-label="Notes">Update tasks, write tomorrow's top 3 tasks.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">6:00 PM</td>
+            <td class="topic" data-label="Topic">Exercise / Personal time</td>
+            <td data-label="Duration">1 hr</td>
+            <td data-label="Type"><span class="badge break">Personal</span></td>
+            <td class="notes" data-label="Notes">Walk, gym, or hobbies.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">8:00 PM</td>
+            <td class="topic" data-label="Topic">Dinner & Family</td>
+            <td data-label="Duration">1 hr</td>
+            <td data-label="Type"><span class="badge break">Family</span></td>
+            <td class="notes" data-label="Notes">Relax and talk with family.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">9:30 PM</td>
+            <td class="topic" data-label="Topic">Light learning / Reading</td>
+            <td data-label="Duration">30–45 min</td>
+            <td data-label="Type"><span class="badge work">Learning</span></td>
+            <td class="notes" data-label="Notes">Read a book or tutorial, small practice tasks.</td>
+          </tr>
+
+          <tr>
+            <td class="time" data-label="Time">11:00 PM</td>
+            <td class="topic" data-label="Topic">Prepare for bed</td>
+            <td data-label="Duration">30 min</td>
+            <td data-label="Type"><span class="badge break">Routine</span></td>
+            <td class="notes" data-label="Notes">Plan tomorrow, relax, sleep by 11:30 PM.</td>
+          </tr>
+
+        </tbody>
+      </table>
+
+      <footer>
+        <small>Tip: Mark top 3 priorities at morning and protect deep work time.</small>
+        <small>Timezone: Your local timezone.</small>
+      </footer>
+    </section>
+  </div>
+
+  <script>
+    // Download the current HTML as a file
+    document.getElementById('downloadBtn').addEventListener('click', function(){
+      const html = document.documentElement.outerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'my-daily-work-routine.html';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

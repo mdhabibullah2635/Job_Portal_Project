@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Job Portal{% endblock %}</title>
+
+    <!-- Bootstrap & Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <!-- AOS Animation -->
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #f0f9ff 0%, #fffaf0 100%);
+            overflow-x: hidden;
+        }
+
+        /* NAVBAR FIX */
+        .navbar, 
+        .navbar * {
+            position: relative;
+            z-index: 10 !important;
+        }
+
+        .dropdown-menu {
+            z-index: 9999 !important;
+            position: absolute;
+        }
+
+        .floating-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: floatMove 15s infinite alternate ease-in-out;
+            z-index: 0 !important;  /* FIXES overlap */
+            pointer-events: none;
+        }
+
+        @keyframes floatMove {
+            0% { transform: translate(0,0) scale(1); }
+            50% { transform: translate(30px,-30px) scale(1.05); }
+            100% { transform: translate(0,0) scale(1); }
+        }
+
+        /* FORM & CARDS */
+        .form-control:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 0.2rem rgba(37,99,235,0.25);
+        }
+
+        .card {
+            border: none;
+            border-radius: 1.4rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: .3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        /* FOOTER */
+        footer {
+            background: linear-gradient(135deg, #6366f1, #ec4899, #22d3ee);
+            color: #fff;
+            padding: 5rem 0 2rem;
+            border-top-left-radius: 2rem;
+            border-top-right-radius: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-link {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none;
+            display: block;
+            margin-bottom: .5rem;
+        }
+
+        .footer-link:hover { color: #fff; }
+
+        .footer-circle {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: .25;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar-nav { text-align: center; }
+            footer .row { text-align: center; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+
+            <a class="navbar-brand" href="{% url 'home' %}">
+                <i class="fas fa-briefcase me-2"></i>JobPortal
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'job_list' %}">Browse Jobs</a></li>
+
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{% url 'skill_match' %}">Skill Match</a></li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="fas fa-user me-1"></i>{{ user.userprofile.display_name|default:user.username }}
+                        </a>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <a class="dropdown-item" href="{% url 'profile' %}">
+                                    <i class="fas fa-user-edit me-2"></i>Profile
+                                </a>
+                            </li>
+
+                            {% if user.userprofile.user_type == 'recruiter' %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'post_job' %}">
+                                        <i class="fas fa-plus me-2"></i>Post Job
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'all_applications' %}">
+                                        <i class="fas fa-inbox me-2"></i>View Applications
+                                    </a>
+                                </li>
+                            {% else %}
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'my_applications' %}">
+                                        <i class="fas fa-paper-plane me-2"></i>My Applications
+                                    </a>
+                                </li>
+                            {% endif %}
+
+                            <li><hr class="dropdown-divider"></li>
+
+                            <li>
+                                <a class="dropdown-item" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-2"></i>Logout
+                                </a>
+                            </li>
+                        </ul>
+
+                    </li>
+                    {% else %}
+                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+                        <li class="nav-item"><a class="btn btn-primary ms-2" href="{% url 'register' %}">Register</a></li>
+                    {% endif %}
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- background circles -->
+        <div class="floating-circle" style="width:300px;height:300px;background:rgba(99,102,241,0.3);top:-80px;left:-80px;"></div>
+        <div class="floating-circle" style="width:250px;height:250px;background:rgba(236,72,153,0.3);bottom:-80px;right:-80px;"></div>
+    </nav>
+
+    <!-- FLASH MESSAGES -->
+    {% if messages %}
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- MAIN CONTENT -->
+    <main class="container my-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-circle" style="width:300px;height:300px;background:rgba(236,72,153,0.25);top:-90px;left:-40px;"></div>
+        <div class="footer-circle" style="width:250px;height:250px;background:rgba(99,102,241,0.25);bottom:-90px;right:-40px;"></div>
+
+        <div class="container">
+            <div class="row mb-4">
+
+                <div class="col-md-4">
+                    <h5><i class="fas fa-briefcase me-2"></i>JobPortal</h5>
+                    <p>Connecting talent with opportunities.</p>
+                </div>
+
+                <div class="col-md-4">
+                    <h6>For Job Seekers</h6>
+                    <a href="{% url 'job_list' %}" class="footer-link">Browse Jobs</a>
+
+                    {% if user.is_authenticated and user.userprofile.user_type == 'jobseeker' %}
+                        <a href="{% url 'my_applications' %}" class="footer-link">My Applications</a>
+                        <a href="{% url 'skill_match' %}" class="footer-link">Skill Matching</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="footer-link">Create Account</a>
+                    {% endif %}
+                </div>
+
+                <div class="col-md-4">
+                    <h6>For Recruiters</h6>
+                    {% if user.is_authenticated and user.userprofile.user_type == 'recruiter' %}
+                        <a href="{% url 'post_job' %}" class="footer-link">Post Jobs</a>
+                        <a href="{% url 'all_applications' %}" class="footer-link">View Applications</a>
+                        <a href="{% url 'skill_match' %}" class="footer-link">Find Candidates</a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="footer-link">Join as Recruiter</a>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <hr>
+
+            <p class="text-center">&copy; 2025 JobPortal. All Rights Reserved.</p>
+
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
+
+</body>
+</html>
