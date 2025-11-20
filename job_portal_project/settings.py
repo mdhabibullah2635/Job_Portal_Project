@@ -25,7 +25,7 @@ ALLOWED_HOSTS = ["*"]
 # CSRF SETTINGS
 # ------------------------
 CSRF_TRUSTED_ORIGINS = [
-    "https://job-portal-project-1-uvs0.onrender.com/",
+    "https://job-portal-project-w9mw.onrender.com/",
     "http://127.0.0.1:8000",  # include port if using runserver
 ]
 
